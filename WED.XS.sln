@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WED.XS", "WED.XS\WED.XS.csproj", "{669E4972-F43B-4327-AE54-EF6175F68ED0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WED.XSQueRen", "..\销售确认\WED.XSQueRen\WED.XSQueRen.csproj", "{A220955A-3890-4751-8803-C3C198B0AD77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{669E4972-F43B-4327-AE54-EF6175F68ED0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{669E4972-F43B-4327-AE54-EF6175F68ED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{669E4972-F43B-4327-AE54-EF6175F68ED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{669E4972-F43B-4327-AE54-EF6175F68ED0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A220955A-3890-4751-8803-C3C198B0AD77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A220955A-3890-4751-8803-C3C198B0AD77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A220955A-3890-4751-8803-C3C198B0AD77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A220955A-3890-4751-8803-C3C198B0AD77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
