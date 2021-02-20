@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 //1.4 设置分隔符
 //1.5.4 增加预计入库量
 
-[assembly: AssemblyVersion("1.8.0.0")]
-[assembly: AssemblyFileVersion("1.8.0.0")]
+[assembly: AssemblyVersion("1.8.1.0")]
+[assembly: AssemblyFileVersion("1.8.1.0")]
