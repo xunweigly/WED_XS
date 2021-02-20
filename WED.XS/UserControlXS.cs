@@ -775,7 +775,7 @@ group by cinvcode having count(1)>1", iSosid);
                                         {
                                             string cInvcode = DbHelper.GetDbString(dt2.Rows[i]["cinvcode"]);
                                             decimal iQtybom = DbHelper.GetDbdecimal(dt2.Rows[i]["iqtybom2"]);
-                                            decimal dDjyl = DbHelper.GetDbdecimal(dt2.Rows[i]["dancengyl2"]);
+                                            decimal dDjyl = DbHelper.GetDbdecimal(dt2.Rows[i]["djyl2"]);
                                             //如果是原料的
                                             if (cInvcode.StartsWith("Y"))
                                             {
@@ -793,15 +793,12 @@ group by cinvcode having count(1)>1", iSosid);
                                     dt2.Rows[iMax]["iqtybom2"] = dMaxqtyZheng;
 
                                     //判断最大值是不是刚才更改的子件
-
-
-
                                     //DialogResult dgr = CommonHelper.MsgQuestion("是否反算成品生产量？");
                                     //if (dgr == DialogResult.Yes)
                                     //{
-                                        string cSortMax = DbHelper.GetDbString(dt2.Rows[iMax]["csortseq"]);
-                                        if (cSortMax.Contains(cSort))
-                                        {
+                                        //string cSortMax = DbHelper.GetDbString(dt2.Rows[iMax]["csortseq"]);
+                                        //if (cSortMax.Contains(cSort))
+                                        //{
                                             dKscsl = DbHelper.GetDbdecimal(dataGridView3.CurrentRow.Cells["kscsl"].Value);
                                             dMaxKscsl = Math.Floor((dMaxqtyZheng - dMaxqty) / dMaxyl) + dKscsl;
 
@@ -810,110 +807,77 @@ group by cinvcode having count(1)>1", iSosid);
                                             //凑整包料 重算半成品
                                             for (int i = 0; i < dtBanChengPin.Rows.Count; i++)
                                             {
-                                                decimal dDjyl = DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["dancengyl2"]);
-                                                decimal dKyl = DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["kyl"]);
-                                                decimal iQtyChayi = dDjyl * (dMaxKscsl - dKscsl);   //获得差异值
-                                                decimal iQtybom = DbHelper.GetDbInt(dtBanChengPin.Rows[i]["iqtybom2"]) + iQtyChayi;  //取整
+                                                //如果是第一层，取dKscsl
 
-                                                dtBanChengPin.Rows[i]["iqtybom2"] = iQtybom;
-                                                if (iQtybom > dKyl)
+
+                                                string cSortCur = DbHelper.GetDbString(dtBanChengPin.Rows[i]["csortseq"]);
+                                                string cSortUp = cSortCur.Substring(0, cSortCur.LastIndexOf('-'));
+
+
+                                                //根据序号进行判断，是本层下级的
+                                                if (cSortUp.Contains(cSort))
                                                 {
-                                                    dtBanChengPin.Rows[i]["ixql"] = iQtybom - dKyl;
-
-                                                }
-                                                else
-                                                    dtBanChengPin.Rows[i]["ixql"] = 0;
-                                            }
-
-                                            for (int i = 0; i < dt2.Rows.Count; i++)
-                                            {
-                                                if (i != iMax)
-                                                {
-                                                    decimal iQtybom;
-                                                    string cInvcode = DbHelper.GetDbString(dt2.Rows[i]["cinvcode"]);
-                                                    decimal dDjyl = DbHelper.GetDbdecimal(dt2.Rows[i]["dancengyl2"]);
-                                                    decimal dKyl = DbHelper.GetDbdecimal(dt2.Rows[i]["kyl"]);
-                                                    decimal iQtyChayi = dDjyl * (dMaxKscsl - dKscsl);   //获得差异值，和录入的值对比
-                                                    iQtybom = DbHelper.GetDbdecimal(dt2.Rows[i]["iqtybom2"]) + iQtyChayi;
-
-                                                    if (cInvcode.StartsWith("S") || cInvcode.StartsWith("T"))
-                                                    {
-                                                        iQtybom = Math.Ceiling(iQtybom * 100) / 100;
-                                                    }
-                                                    else
-                                                    {
-                                                        iQtybom = Math.Ceiling(iQtybom);
-                                                    }
-
-
-
-                                                    //只计算使用的
-                                                    if (DbHelper.GetDbString(dt2.Rows[i]["buse"]) == "True" || DbHelper.GetDbString(dt2.Rows[i]["lx"]) != "1")
-                                                    {
-                                                        dt2.Rows[i]["iqtybom2"] = iQtybom;
-                                                        if (iQtybom > dKyl)
-                                                        {
-
-                                                            dt2.Rows[i]["ixql"] = iQtybom - dKyl;
-                                                        }
-                                                        else
-                                                        {
-                                                            dt2.Rows[i]["ixql"] = 0;
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-
-                                            for (int i = 0; i < dtBanChengPin.Rows.Count; i++)
-                                            {
-                                                cSort = DbHelper.GetDbString(dtBanChengPin.Rows[i]["csortseq"]);
-                                                if (cSort.Split('-').Length == 2)
-                                                {
-                                                    dtBanChengPin.Rows[i]["shangjiyl"] = dMaxKscsl;
-                                                }
-                                                else
-                                                {
-                                                    string cSortUp = cSort.Substring(0, cSort.LastIndexOf('-'));
                                                     DataRow[] dr = dtBanChengPin.Select(string.Format("csortseq='{0}'", cSortUp));
-                                                    if (dr != null)
+                                                    if (dr.Length > 0)
                                                     {
                                                         dtBanChengPin.Rows[i]["shangjiyl"] = DbHelper.GetDbdecimal(dr[0]["ixql"]);
                                                     }
-
-                                                }
-
-                                            }
-
-                                            for (int i = 0; i < dt2.Rows.Count; i++)
-                                            {
-                                                cSort = DbHelper.GetDbString(dt2.Rows[i]["csortseq"]);
-                                                if (cSort.Split('-').Length == 2)
-                                                {
-                                                    dt2.Rows[i]["shangjiyl"] = dMaxKscsl;
-                                                }
-                                                else
-                                                {
-                                                    string cSortUp = cSort.Substring(0, cSort.LastIndexOf('-'));
-                                                    DataRow[] dr = dtBanChengPin.Select(string.Format("csortseq='{0}'", cSortUp));
-                                                    if (dr != null)
+                                                    else
                                                     {
-                                                        dt2.Rows[i]["shangjiyl"] = DbHelper.GetDbdecimal(dr[0]["ixql"]);
+                                                        dtBanChengPin.Rows[i]["shangjiyl"] = dKscsl;
+                                                    }
+                                                    //计算需求量，这个就不考虑相同物料重复的问题了
+                                                    dtBanChengPin.Rows[i]["iqtybom2"] = DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["shangjiyl"]) * DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["dancengyl2"]);
+
+                                                    if (DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["iqtybom2"]) > DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["kyl"]))
+                                                    {
+                                                        dtBanChengPin.Rows[i]["ixql"] = DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["iqtybom2"]) - DbHelper.GetDbdecimal(dtBanChengPin.Rows[i]["kyl"]);
                                                     }
                                                     else
                                                     {
-                                                        dr = dt2.Select(string.Format("csortseq='{0}'", cSortUp));
+                                                        dtBanChengPin.Rows[i]["ixql"] = 0;
+                                                    }
+                                                }
+
+
+                                            }
+                                for (int i = 0; i < dt2.Rows.Count; i++)
+                                {
+
+                                  
+                                }
+                                         
+
+                                            for (int i = 0; i < dt2.Rows.Count; i++)
+                                            {
+                                                
+
+                                                    string cSortCur = DbHelper.GetDbString(dt2.Rows[i]["csortseq"]);
+                                                    string cSortUp = cSortCur.Substring(0, cSortCur.LastIndexOf('-'));
+                                                    if (cSortUp.Contains(cSort))
+                                                    {
+                                                        DataRow[] dr = dtBanChengPin.Select(string.Format("csortseq='{0}'", cSortUp));
                                                         if (dr != null)
                                                         {
                                                             dt2.Rows[i]["shangjiyl"] = DbHelper.GetDbdecimal(dr[0]["ixql"]);
                                                         }
+                                                  if (i != iMax)
+                                                    {
+                                                        dt2.Rows[i]["iqtybom2"] = DbHelper.GetDbdecimal(dt2.Rows[i]["shangjiyl"]) * DbHelper.GetDbdecimal(dt2.Rows[i]["dancengyl2"]);
+
                                                     }
+
+                                                    ////只计算使用的
+                                                    //if (DbHelper.GetDbString(dt2.Rows[i]["buse"]) == "True" || DbHelper.GetDbString(dt2.Rows[i]["lx"]) != "1")
+                                                    //{
+
+
+
+                                                    //}
+
                                                 }
-
-
+                                                
                                             }
-
-
 
                                             //重写 可用量
                                             sql = string.Format(@"select cinvcode,sum(kyl) kyl from zdy_wed_sobom_qr where isosid = '{0}' and lx =1 and buse= 1
@@ -932,22 +896,18 @@ group by cinvcode having count(1)>1", iSosid);
                                                     decimal dKyl2 = 0;
                                                     for (int i = 0; i < dt2.Rows.Count; i++)
                                                     {
-
                                                         string cInvcode = DbHelper.GetDbString(dt2.Rows[i]["cinvcode"]);
                                                         if (cInvcode == cInvcodecf)
                                                         {
-
                                                             iQtybom = DbHelper.GetDbdecimal(dt2.Rows[i]["iqtybom2"]);
                                                             dKyl2 = dKyl - dljkyl;
                                                             //MessageBox.Show(iQtybom.ToString());
                                                             //MessageBox.Show(dKyl.ToString() + "/" + dljkyl.ToString());
-
                                                             if (dKyl2 > iQtybom)
                                                             {
                                                                 dt2.Rows[i]["kyl"] = iQtybom;
                                                                 dt2.Rows[i]["ixql"] = 0;
                                                                 dljkyl = dljkyl + iQtybom;
-
                                                             }
                                                             else
                                                             {
@@ -981,7 +941,7 @@ group by cinvcode having count(1)>1", iSosid);
                                                 }
 
 
-                                            }
+                                            //}
 
 
                                         //}
